@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - Smart Job Recommender{% endblock %}
+
+{% block content %}
+<div class="container-sm" style="margin-top: 2rem;">
+    <!-- Profile Header -->
+    <div class="card">
+        <div class="card-header text-center">
+            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 2rem; font-weight: 700;">
+                {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+            </div>
+            <h1 class="card-title">{{ user.get_full_name }}</h1>
+            <p class="card-subtitle">@{{ user.username }}</p>
+        </div>
+
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <p style="color: var(--text-secondary);">{{ user.email }}</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Your Skills</label>
+                <div style="margin-top: 0.5rem;">
+                    {% for skill in profile.get_skills_list %}
+                        <span class="skill-tag">{{ skill }}</span>
+                    {% empty %}
+                        <p style="color: var(--text-light);">No skills added yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if profile.bio %}
+            <div class="form-group">
+                <label class="form-label">Bio</label>
+                <p style="color: var(--text-secondary);">{{ profile.bio }}</p>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label">Member Since</label>
+                <p style="color: var(--text-secondary);">{{ profile.created_at|date:"F d, Y" }}</p>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <a href="#edit-profile" class="btn btn-primary" onclick="toggleEditForm(); return false;">Edit Profile</a>
+            <a href="{% url 'jobs:recommendations' %}" class="btn btn-secondary">Get Recommendations</a>
+        </div>
+    </div>
+
+    <!-- Edit Profile Form (Hidden by default) -->
+    <div id="edit-profile-form" style="display: none; margin-top: 2rem;">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Edit Profile</h2>
+            </div>
+
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- First Name -->
+                    <div class="form-group">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                            First Name *
+                        </label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            {% for error in form.first_name.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="form-group">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                            Last Name *
+                        </label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            {% for error in form.last_name.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            Email *
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            {% for error in form.email.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="form-group">
+                        <label for="{{ form.skills.id_for_label }}" class="form-label">
+                            Your Skills *
+                        </label>
+                        {{ form.skills }}
+                        {% if form.skills.errors %}
+                            {% for error in form.skills.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="form-help">Enter your skills separated by commas</div>
+                    </div>
+
+                    <!-- Bio -->
+                    <div class="form-group">
+                        <label for="{{ form.bio.id_for_label }}" class="form-label">
+                            Bio
+                        </label>
+                        {{ form.bio }}
+                        {% if form.bio.errors %}
+                            {% for error in form.bio.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Buttons -->
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-outline" onclick="toggleEditForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleEditForm() {
+    var form = document.getElementById('edit-profile-form');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        form.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+// Show form if there are errors
+{% if form.errors %}
+    document.getElementById('edit-profile-form').style.display = 'block';
+{% endif %}
+</script>
+{% endblock %}

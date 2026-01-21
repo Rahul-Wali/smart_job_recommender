@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} - Smart Job Recommender{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <!-- Back Button -->
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'jobs:job_list' %}" class="btn btn-outline btn-sm">← Back to Jobs</a>
+    </div>
+
+    <!-- Job Details Card -->
+    <div class="card">
+        <div class="card-header">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <h1 class="card-title">{{ job.title }}</h1>
+                    <p class="card-subtitle">{{ job.company }}</p>
+                </div>
+                <span class="badge badge-success">Active</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Job Meta Information -->
+            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-secondary);">
+                <div>
+                    <strong style="color: var(--text-primary);">📍 Location</strong>
+                    <p style="margin: 0.25rem 0 0 0; color: var(--text-secondary);">{{ job.location }}</p>
+                </div>
+                {% if job.salary_range %}
+                <div>
+                    <strong style="color: var(--text-primary);">💰 Salary</strong>
+                    <p style="margin: 0.25rem 0 0 0; color: var(--text-secondary);">{{ job.salary_range }}</p>
+                </div>
+                {% endif %}
+                <div>
+                    <strong style="color: var(--text-primary);">🕐 Posted</strong>
+                    <p style="margin: 0.25rem 0 0 0; color: var(--text-secondary);">{{ job.created_at|timesince }} ago</p>
+                </div>
+            </div>
+
+            <!-- Job Description -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.75rem;">Job Description</h3>
+                <p style="color: var(--text-secondary); line-height: 1.8;">{{ job.description }}</p>
+            </div>
+
+            <!-- Required Skills -->
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.75rem;">Required Skills</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    {% for skill in job.get_skills_list %}
+                        <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <a href="{% url 'jobs:recommendations' %}" class="btn btn-primary">Get Personalized Recommendations</a>
+            <a href="{% url 'jobs:job_list' %}" class="btn btn-outline">Browse More Jobs</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

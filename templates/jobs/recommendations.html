@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Job Recommendations - Smart Job Recommender{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <!-- Header -->
+    <div class="hero">
+        <h1>🎯 Your Personalized Job Recommendations</h1>
+        <p>AI-powered matches based on your skills using Machine Learning</p>
+    </div>
+
+    <!-- User Skills Display -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Your Skills</h2>
+        </div>
+        <div class="card-body">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                {% for skill in user_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% empty %}
+                    <p style="color: var(--text-light);">No skills found.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'accounts:profile' %}" class="btn btn-outline btn-sm">Update Skills</a>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    {% if recommendations %}
+        <h2 style="margin-bottom: 1rem;">Recommended Jobs ({{ recommendations|length }})</h2>
+        <div class="grid grid-2">
+            {% for rec in recommendations %}
+            <div class="job-card">
+                <!-- Match Score -->
+                <div class="recommendation-score">
+                    <span class="score-value">{{ rec.match_percentage }}%</span>
+                    <span class="score-label">Match Score</span>
+                    <div>
+                        <span class="confidence-badge confidence-{{ rec.confidence|lower|cut:' ' }}">
+                            {{ rec.confidence }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Job Info -->
+                <div style="cursor: pointer;" onclick="window.location='{% url 'jobs:job_detail' rec.job.id %}'">
+                    <div class="job-card-header">
+                        <div>
+                            <h3 class="job-title">{{ rec.job.title }}</h3>
+                            <p class="job-company">{{ rec.job.company }}</p>
+                        </div>
+                    </div>
+                    <div class="job-meta">
+                        <span>📍 {{ rec.job.location }}</span>
+                        {% if rec.job.salary_range %}
+                        <span>💰 {{ rec.job.salary_range }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="job-description">{{ rec.job.get_short_description }}</p>
+                    <div class="job-skills">
+                        {% for skill in rec.job.get_skills_list %}
+                            <span class="skill-tag skill-tag-outline">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <a href="{% url 'jobs:job_detail' rec.job.id %}" class="btn btn-primary btn-block">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% elif no_matches %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3 class="empty-state-title">No Matching Jobs Found</h3>
+            <p class="empty-state-description">
+                We couldn't find jobs that match your current skills. Try updating your skills or browse all available jobs.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                <a href="{% url 'accounts:profile' %}" class="btn btn-primary">Update Skills</a>
+                <a href="{% url 'jobs:job_list' %}" class="btn btn-outline">Browse All Jobs</a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- ML Algorithm Info -->
+    <div class="card" style="margin-top: 2rem; background: linear-gradient(135deg, #eff6ff, #dbeafe); border: none;">
+        <div class="card-header">
+            <h3 class="card-title">How We Generate Recommendations</h3>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 0.75rem;">Our AI-powered recommendation system uses:</p>
+            <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+                <li><strong>TF-IDF Vectorization:</strong> Converts your skills and job requirements into numerical vectors</li>
+                <li><strong>Cosine Similarity:</strong> Measures the similarity between your profile and each job</li>
+                <li><strong>Smart Ranking:</strong> Sorts jobs by match percentage to show you the best opportunities first</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

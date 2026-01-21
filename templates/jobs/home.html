@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Smart Job Recommender{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>🎯 Find Your Perfect Job Match</h1>
+        <p>AI-powered job recommendations tailored to your skills using advanced machine learning algorithms</p>
+        {% if not user.is_authenticated %}
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-lg" style="border-color: white; color: white;">Login</a>
+        </div>
+        {% else %}
+        <a href="{% url 'jobs:recommendations' %}" class="btn btn-secondary btn-lg">Get Recommendations</a>
+        {% endif %}
+    </div>
+
+    <!-- Features Section -->
+    <div class="grid grid-3" style="margin-top: 2rem;">
+        <div class="card">
+            <div style="text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+                <h3>AI-Powered Matching</h3>
+                <p>Our machine learning algorithm uses TF-IDF and Cosine Similarity to match your skills with job requirements.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                <h3>Smart Rankings</h3>
+                <p>Get personalized job recommendations ranked by relevance score and match percentage.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+                <h3>Instant Results</h3>
+                <p>Receive real-time job recommendations based on your profile and skills instantly.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    {% if user.is_authenticated %}
+    <div style="margin-top: 3rem;">
+        <h2 class="text-center">Platform Statistics</h2>
+        <div class="stats-grid" style="margin-top: 1.5rem;">
+            <div class="stat-card">
+                <span class="stat-value">{{ jobs_count }}</span>
+                <span class="stat-label">Active Jobs</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <span class="stat-value">100%</span>
+                <span class="stat-label">AI-Powered</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <span class="stat-value">24/7</span>
+                <span class="stat-label">Available</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- How It Works -->
+    <div style="margin-top: 3rem;">
+        <h2 class="text-center">How It Works</h2>
+        <div class="grid grid-3" style="margin-top: 1.5rem;">
+            <div class="card">
+                <div style="text-align: center;">
+                    <div class="badge badge-primary" style="font-size: 1.5rem; width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">1</div>
+                    <h3>Create Profile</h3>
+                    <p>Sign up and add your skills, experience, and preferences to your profile.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="text-align: center;">
+                    <div class="badge badge-primary" style="font-size: 1.5rem; width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">2</div>
+                    <h3>Get Matched</h3>
+                    <p>Our AI analyzes your skills and matches them with job requirements using machine learning.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="text-align: center;">
+                    <div class="badge badge-primary" style="font-size: 1.5rem; width: 3rem; height: 3rem; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">3</div>
+                    <h3>Apply & Succeed</h3>
+                    <p>Browse ranked recommendations and apply to jobs that perfectly match your skills.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    {% if not user.is_authenticated %}
+    <div class="card" style="margin-top: 3rem; background: linear-gradient(135deg, #eff6ff, #dbeafe); border: none; text-align: center;">
+        <h2>Ready to Find Your Dream Job?</h2>
+        <p>Join thousands of job seekers using AI to find their perfect match.</p>
+        <div style="margin-top: 1.5rem;">
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Create Free Account</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
